@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.countrystats.data.remote.models.CountryDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key.Companion.Home
@@ -30,36 +32,56 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
+import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.ui.nav.Screens
 import com.example.countrystats.ui.vm.CountryViewModel
 import java.time.temporal.TemporalAdjusters.next
 
 @Composable
-fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController) {
+fun HomeScreen(
+    countryViewModel: CountryViewModel,
+    navController: NavController,
+    networkStatus: ConnectivityObserver.Status
+) {
 
     val countries = countryViewModel.countryList!!
 
+
+
     Scaffold(
         topBar = {
-            TopAppBar (
+            TopAppBar(
                 title = {
                     Text(text = "COUNTRY STATS", fontWeight = FontWeight.Bold)
                 }
             )
         }
     ) {
-        if(countries.isNotEmpty()){
-        LazyColumn(modifier = Modifier.padding(it)) {
-            itemsIndexed(countries) { index,country ->
-                CountryCard(country = country, countryIndex = index, navController = navController)
+
+        if (networkStatus == ConnectivityObserver.Status.Available) {
+            if (countries.isNotEmpty()){
+                LazyColumn(modifier = Modifier.padding(it)) {
+                    itemsIndexed(countries) {index, country ->
+                        CountryCard(
+                            country = country,
+                            countryIndex = index,
+                            navController = navController
+                        )
+                    }
+                }
+            }
+        } else {
+            Box(modifier = Modifier
+                .padding(it)
+                .fillMaxSize(), contentAlignment = Alignment.Center){
+                Text("No Internet")
             }
         }
-        }
     }
-
 }
 
 @Composable
@@ -109,5 +131,7 @@ fun CountryCard(
             }
 
         }
+
     }
+
 }

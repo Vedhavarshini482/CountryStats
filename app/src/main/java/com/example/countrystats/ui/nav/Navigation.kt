@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.ui.screens.DetailScreen
 import com.example.countrystats.ui.screens.HomeScreen
 import com.example.countrystats.ui.vm.CountryViewModel
@@ -18,17 +19,18 @@ sealed class Screens(val route: String) {
 }
 
 @Composable
-fun SetupNavHost(countryViewModel: CountryViewModel, navController: NavHostController) {
+fun SetupNavHost(countryViewModel: CountryViewModel, navController: NavHostController,networkStatus:ConnectivityObserver.Status) {
 
     NavHost(navController = navController, startDestination = Screens.Home.route) {
         composable(route = Screens.Home.route) {
-            HomeScreen(countryViewModel = countryViewModel, navController = navController)
+            HomeScreen(countryViewModel = countryViewModel, navController = navController,networkStatus=networkStatus)
         }
         composable(route = Screens.Detail.route + "/{countryId}") { backStackEntry ->
             DetailScreen(
                 id = backStackEntry.arguments?.getString("countryId")!!,
                 countryViewModel = countryViewModel,
-                navController = navController
+                navController = navController,
+                networkStatus=networkStatus
             )
         }
     }
