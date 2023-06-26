@@ -18,7 +18,10 @@ class CountryViewModel:ViewModel(){
     val countryList: List<CountryDetails>
         get()=_countryList
 
-    fun getCountryList(){
+    init {
+        getCountryList()
+    }
+    private fun getCountryList(){
         viewModelScope.launch {
             val countryApi=CountryApi.getInstance()
             try{
