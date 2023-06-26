@@ -103,7 +103,6 @@ fun CountryCard(
             .fillMaxSize()
             .padding(top = 7.dp, bottom = 7.dp, start = 14.dp, end = 14.dp)
             .clickable {
-                Log.d("Varsha", "countryIndex ")
                 navController.navigate(Screens.Detail.route + "/$countryIndex")
             }
     ) {
