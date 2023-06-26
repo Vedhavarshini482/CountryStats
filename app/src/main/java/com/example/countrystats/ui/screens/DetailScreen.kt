@@ -15,9 +15,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.countrystats.ui.vm.CountryViewModel
 
@@ -25,6 +28,7 @@ import com.example.countrystats.ui.vm.CountryViewModel
 @Composable
 fun DetailScreen(id:Int,countryViewModel: CountryViewModel, navController: NavController) {
     val country = countryViewModel.countryList[id]
+    val context = LocalContext.current
     LazyColumn {
         item {
             Column {
@@ -35,19 +39,23 @@ fun DetailScreen(id:Int,countryViewModel: CountryViewModel, navController: NavCo
                         }
                     },
                     title = {
-                        Text(text = "Country : /${country.name.common}", fontWeight = FontWeight.Bold)
+                        Text(text = country.name.common, fontWeight = FontWeight.Bold)
                     }
                 )
-                Image(painter = rememberImagePainter(country.flag.svg), contentDescription = null,
+                Image(painter = rememberAsyncImagePainter(
+                    model=country.flags.png,
+                    imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
+                    contentScale = ContentScale.Fit
+                ), contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp))
-                Text(text = "Official : /${country.name.official}\n", modifier = Modifier.padding(10.dp))
-                Text(text = "Capital : /${country.capital}", modifier = Modifier.padding(10.dp))
-                Text(text = "Area : /${country.area}\n", modifier = Modifier.padding(10.dp))
-                Text(text = "Population : /${country.population}\n", modifier = Modifier.padding(10.dp))
-                Text(text = "Country Description :\n /${country.flag.alt}", modifier = Modifier.padding(10.dp))
+                Text(text = "Official : ${country.name.official}\n", modifier = Modifier.padding(10.dp))
+                Text(text = "Capital : ${country.capital}", modifier = Modifier.padding(10.dp))
+                Text(text = "Area : ${country.area}\n", modifier = Modifier.padding(10.dp))
+                Text(text = "Population : ${country.population}\n", modifier = Modifier.padding(10.dp))
+                Text(text = "Country Description :\n ${country.flags.alt}", modifier = Modifier.padding(10.dp))
 
             }
         }

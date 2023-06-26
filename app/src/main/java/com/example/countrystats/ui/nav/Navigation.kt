@@ -25,9 +25,9 @@ fun SetupNavHost(countryViewModel: CountryViewModel, navController: NavHostContr
         composable(route = Screens.Home.route) {
             HomeScreen(countryViewModel = countryViewModel, navController = navController)
         }
-        composable(route = Screens.Detail.route) { backStackEntry ->
+        composable(route = Screens.Detail.route + "/{countryId}") { backStackEntry ->
             DetailScreen(
-                id = id,
+                id = backStackEntry.arguments?.getInt("countryId")!!,
                 countryViewModel = countryViewModel,
                 navController = navController
             )

@@ -21,20 +21,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ui.nav.Screens
 import com.example.countrystats.ui.vm.CountryViewModel
-
-
 
 @Composable
 fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController) {
 
-    val countries = countryViewModel.countryList
+    val countries = countryViewModel.countryList!!
 
     Scaffold(
         topBar = {
@@ -45,10 +45,12 @@ fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController)
             )
         }
     ) {
+        if(countries.isNotEmpty()){
         LazyColumn(modifier = Modifier.padding(it)) {
             items(countries) { country ->
                 GameCard(country = country, countries = countries, navController = navController)
             }
+        }
         }
     }
 
@@ -60,6 +62,8 @@ fun GameCard(
     countries: List<CountryDetails>,
     navController: NavController
 ) {
+
+    val context = LocalContext.current
     Card(
         elevation = 7.dp,
         shape = RoundedCornerShape(7.dp),
@@ -68,13 +72,17 @@ fun GameCard(
             .padding(top = 7.dp, bottom = 7.dp, start = 14.dp, end = 14.dp)
             .clickable {
                 id=countries.indexOf(country)
-                navController.navigate(Screens.Detail.route + "/${countries}")
+                navController.navigate(Screens.Detail.route + "/${id}")
             }
     ) {
         Row {
             Image(
-                painter = rememberImagePainter(country.flag.svg),
-                contentDescription = null,
+                painter = rememberAsyncImagePainter(
+                    model=country.flags.png,
+                    imageLoader= ImageLoader.Builder(context).crossfade(true).build(),
+                    contentScale=ContentScale.Fit
+                ),
+                contentDescription = "Flag of /${country.name}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(175.dp)
@@ -86,7 +94,7 @@ fun GameCard(
                     .align(Alignment.CenterVertically)) {
                 Text(text = country.name.common, fontWeight = FontWeight.Bold)
                 Text(text = country.name.official, fontWeight = FontWeight.Medium)
-               // Text(text = country.population, fontWeight = FontWeight.Medium)
+               Text(text = country.population.toString(), fontWeight = FontWeight.Medium, overflow = TextOverflow.Ellipsis)
             }
 
         }
