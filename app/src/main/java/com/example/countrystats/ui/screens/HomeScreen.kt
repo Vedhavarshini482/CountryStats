@@ -1,10 +1,11 @@
 package com.example.countrystats.ui.screens
 
+import android.util.Log
 import com.example.countrystats.data.remote.models.CountryDetails
-import com.example.countrystats.util.Constants.Companion.id
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -12,14 +13,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +35,7 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ui.nav.Screens
 import com.example.countrystats.ui.vm.CountryViewModel
+import java.time.temporal.TemporalAdjusters.next
 
 @Composable
 fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController) {
@@ -47,8 +53,8 @@ fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController)
     ) {
         if(countries.isNotEmpty()){
         LazyColumn(modifier = Modifier.padding(it)) {
-            items(countries) { country ->
-                GameCard(country = country, countries = countries, navController = navController)
+            itemsIndexed(countries) { index,country ->
+                CountryCard(country = country, countryIndex = index, navController = navController)
             }
         }
         }
@@ -57,9 +63,9 @@ fun HomeScreen(countryViewModel: CountryViewModel, navController: NavController)
 }
 
 @Composable
-fun GameCard(
+fun CountryCard(
     country: CountryDetails,
-    countries: List<CountryDetails>,
+    countryIndex: Int,
     navController: NavController
 ) {
 
@@ -71,16 +77,16 @@ fun GameCard(
             .fillMaxSize()
             .padding(top = 7.dp, bottom = 7.dp, start = 14.dp, end = 14.dp)
             .clickable {
-                id=countries.indexOf(country)
-                navController.navigate(Screens.Detail.route + "/${id}")
+                Log.d("Varsha", "countryIndex ")
+                navController.navigate(Screens.Detail.route + "/$countryIndex")
             }
     ) {
         Row {
             Image(
                 painter = rememberAsyncImagePainter(
-                    model=country.flags.png,
-                    imageLoader= ImageLoader.Builder(context).crossfade(true).build(),
-                    contentScale=ContentScale.Fit
+                    model = country.flags.png,
+                    imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
+                    contentScale = ContentScale.Fit
                 ),
                 contentDescription = "Flag of /${country.name}",
                 contentScale = ContentScale.Crop,
@@ -91,10 +97,15 @@ fun GameCard(
             Column(
                 modifier = Modifier
                     .padding(10.dp)
-                    .align(Alignment.CenterVertically)) {
+                    .align(Alignment.CenterVertically)
+            ) {
                 Text(text = country.name.common, fontWeight = FontWeight.Bold)
                 Text(text = country.name.official, fontWeight = FontWeight.Medium)
-               Text(text = country.population.toString(), fontWeight = FontWeight.Medium, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text = country.population.toString(),
+                    fontWeight = FontWeight.Medium,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
 
         }

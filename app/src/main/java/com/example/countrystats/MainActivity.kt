@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,16 +29,22 @@ import com.example.countrystats.ui.theme.CountryStatsTheme
 
 class MainActivity : ComponentActivity() {
 
-
+private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        connectivityObserver=NetworkConnectivityObserver(applicationContext)
+
         setContent {
             CountryStatsTheme {
-
+                val status by connectivityObserver.observe().collectAsState(
+                    initial = ConnectivityObserver.Status.Unavailable)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
+
                 ) {
+
+                     Text(text="Network Status $status")
                     val navController = rememberNavController()
                     SetupNavHost(navController = navController, countryViewModel = viewModel())
                 }
@@ -44,47 +52,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-//@Composable
-//fun BarChart(
-//    inputList: List<BarChartInput>,
-//    modifier: Modifier=Modifier,
-//    showDescription:Boolean
-//){
-//
-//    Row(
-//        modifier=Modifier,
-//        verticalAlignment=Alignment.Bottom,
-//        horizontalArrangement = Arrangement.SpaceBetween
-//    ){
-//        val listSum by remember{
-//            mutableStateOf(inputList.sumOf { it.value })
-//        }
-//        inputList.forEach{input->
-//            val percentage=input.value/listSum.toFloat()
-//            Bar(modifier=Modifier
-//                .height(120.dp*percentage*inputList.size)
-//                .width(40.dp),
-//                primaryColor = input.color,
-//                percentage=percentage,
-//                description = input.Description,
-//                showDescription=showDescription
-//                )
-//        }
-//    }
-//}
-//
-//@Composable
-//fun Bar(
-//    modifier:Modifier=Modifier,
-//    primaryColor:Color,
-//    percentage:Float,
-//    description:String,
-//    showDescription: Boolean
-//){}
-//
-//data class BarChartInput(
-//    val value:Int,
-//    val Description:String,
-//    var color:Color
-//)

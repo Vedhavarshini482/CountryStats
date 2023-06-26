@@ -12,7 +12,6 @@ import com.example.countrystats.util.Constants.Screens.DETAIL_SCREEN
 import com.example.countrystats.util.Constants.Screens.HOME_SCREEN
 
 sealed class Screens(val route: String) {
-
     object Home : Screens(route = HOME_SCREEN)
     object Detail : Screens(route = DETAIL_SCREEN)
 
@@ -27,7 +26,7 @@ fun SetupNavHost(countryViewModel: CountryViewModel, navController: NavHostContr
         }
         composable(route = Screens.Detail.route + "/{countryId}") { backStackEntry ->
             DetailScreen(
-                id = backStackEntry.arguments?.getInt("countryId")!!,
+                id = backStackEntry.arguments?.getString("countryId")!!,
                 countryViewModel = countryViewModel,
                 navController = navController
             )

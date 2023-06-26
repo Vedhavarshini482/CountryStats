@@ -5,7 +5,6 @@ class Constants {
         const val BASE_URL = "https://restcountries.com/"
         const val COUNTRY_ENDPOINT =
             "v3.1/independent?status=true&fields=name,capital,currencies,population,area,flags"
-        var id=0
     }
 
 object Screens {
