@@ -61,7 +61,11 @@ fun HomeScreen(
             )
         }
     ) {
-
+        LaunchedEffect(key1 = networkStatus){
+            if (networkStatus == ConnectivityObserver.Status.Available){
+                countryViewModel.getCountryList()
+            }
+        }
         if (networkStatus == ConnectivityObserver.Status.Available) {
             if (countries.isNotEmpty()){
                 LazyColumn(modifier = Modifier.padding(it)) {
