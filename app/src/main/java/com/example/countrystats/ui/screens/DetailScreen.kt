@@ -1,6 +1,7 @@
 package com.example.countrystats.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +27,7 @@ fun DetailScreen(id:Int,countryViewModel: CountryViewModel, navController: NavCo
     val country = countryViewModel.countryList[id]
     LazyColumn {
         item {
-            column {
+            Column {
                 TopAppBar(
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
@@ -34,7 +35,7 @@ fun DetailScreen(id:Int,countryViewModel: CountryViewModel, navController: NavCo
                         }
                     },
                     title = {
-                        Text(text = country.name.common, fontweight = FontWeight.Bold)
+                        Text(text = "Country : /${country.name.common}", fontWeight = FontWeight.Bold)
                     }
                 )
                 Image(painter = rememberImagePainter(country.flag.svg), contentDescription = null,

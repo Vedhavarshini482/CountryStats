@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -59,7 +60,7 @@ fun GameCard(
     countries: List<CountryDetails>,
     navController: NavController
 ) {
-    card(
+    Card(
         elevation = 7.dp,
         shape = RoundedCornerShape(7.dp),
         modifier = Modifier
@@ -79,13 +80,13 @@ fun GameCard(
                     .width(175.dp)
                     .height(115.dp)
             )
-            column(
+            Column(
                 modifier = Modifier
                     .padding(10.dp)
                     .align(Alignment.CenterVertically)) {
-                Text(text = country.name.common, fontWeight = FontWeight.Bold,contentDescription=null)
-                Text(text = country.name.official, fontWeight = FontWeight.Medium,contentDescription=null)
-                Text(text = country.population, fontWeight = FontWeight.Medium, overflow = TextOverflow.Ellipsis,contentDescription=null)
+                Text(text = country.name.common, fontWeight = FontWeight.Bold)
+                Text(text = country.name.official, fontWeight = FontWeight.Medium)
+               // Text(text = country.population, fontWeight = FontWeight.Medium)
             }
 
         }
