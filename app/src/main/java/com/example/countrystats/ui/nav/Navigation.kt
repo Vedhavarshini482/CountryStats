@@ -36,10 +36,10 @@ fun SetupNavHost(
                 networkStatus = networkStatus
             )
         }
-        composable(route = Screens.Detail.route + "/{countryId}") { navBackStackEntry->
+        composable(route = Screens.Detail.route + "/{countryId}") { backStackEntry->
 
             DetailScreen(
-                id = navBackStackEntry.arguments?.getString("countryId")!!,
+                id = backStackEntry.arguments?.getString("countryId")!!,
                 countryViewModel = countryViewModel,
                 navController = navController,
                 networkStatus = networkStatus
