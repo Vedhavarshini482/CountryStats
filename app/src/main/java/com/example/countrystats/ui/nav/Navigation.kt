@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.createGraph
 import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.ui.screens.DetailScreen
 import com.example.countrystats.ui.screens.HomeScreen

@@ -1,5 +1,6 @@
 package com.example.countrystats.ui.screens
 
+
 import com.example.countrystats.data.remote.models.CountryDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,23 +54,23 @@ fun HomeScreen(
     val countries = countryViewModel.countryList!!
 
     Scaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = {Text("View Chart")},
-                icon={Icon(Icons.Filled.List,contentDescription=null)},
-                onClick = {
-                    navController.navigate(Screens.ViewChart.route)
-                }
-            )
-
-        },
-
         topBar = {
             TopAppBar(
                 title = {
                     Text(text = "COUNTRY STATS", fontWeight = FontWeight.Bold)
                 }
             )
+        },
+            floatingActionButton = {
+                if(networkStatus==ConnectivityObserver.Status.Available) {
+                ExtendedFloatingActionButton(
+                    text = { Text("View Chart") },
+                    icon = { Icon(Icons.Filled.List, contentDescription = null) },
+                    onClick = {
+                        navController.navigate(Screens.ViewChart.route)
+                    }
+                )
+            }
         }
     ) {
         LaunchedEffect(key1 = networkStatus) {

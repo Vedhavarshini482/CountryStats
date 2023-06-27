@@ -1,5 +1,8 @@
 package com.example.countrystats.ui.screens
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,15 +26,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentManager.BackStackEntry
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.data.remote.models.CountryDetails
 import com.example.countrystats.ui.vm.CountryViewModel
-import com.example.countrystats.util.Constants
-
 
 @Composable
 fun DetailScreen(
@@ -40,7 +40,7 @@ fun DetailScreen(
     navController: NavController,
     networkStatus: ConnectivityObserver.Status
 ) {
-    var country = countryViewModel.countryList[id.toInt()]
+    val country by remember { mutableStateOf<CountryDetails>(countryViewModel.countryList[id.toInt()]) }
     val context = LocalContext.current
 
     if (networkStatus == ConnectivityObserver.Status.Available) {
