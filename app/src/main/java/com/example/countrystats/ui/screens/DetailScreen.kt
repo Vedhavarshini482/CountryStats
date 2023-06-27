@@ -23,29 +23,36 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentManager.BackStackEntry
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.countrystats.ConnectivityObserver
+import com.example.countrystats.data.remote.models.CountryDetails
 import com.example.countrystats.ui.vm.CountryViewModel
+import com.example.countrystats.util.Constants
 
 
 @Composable
-fun DetailScreen(id:String,countryViewModel: CountryViewModel, navController: NavController,networkStatus: ConnectivityObserver.Status) {
-    val country = countryViewModel.countryList[id.toInt()]
+fun DetailScreen(
+    id: String,
+    countryViewModel: CountryViewModel,
+    navController: NavController,
+    networkStatus: ConnectivityObserver.Status
+) {
+    var country = countryViewModel.countryList[id.toInt()]
     val context = LocalContext.current
+
     if (networkStatus == ConnectivityObserver.Status.Available) {
         LazyColumn {
             item {
                 Column {
                     TopAppBar(
                         navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    contentDescription = null
-                                )
+                            IconButton(onClick = {
+                                    navController.popBackStack()
+                            }) {
+                                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
                             }
                         },
                         title = {
@@ -70,11 +77,11 @@ fun DetailScreen(id:String,countryViewModel: CountryViewModel, navController: Na
                     )
                     Divider()
                     Text(
-                        text = "Capital Name : ${country.capital}",
+                        text = "Capital Name : ${country.capital[0]}",
                         modifier = Modifier.padding(10.dp)
                     )
                     Divider()
-                    Text(text = "Total Area : ${country.area}", modifier = Modifier.padding(10.dp))
+                    Text(text = "Total Area : ${country.area} km", modifier = Modifier.padding(10.dp))
                     Divider()
                     Text(
                         text = "Total Population : ${country.population}\n",
@@ -89,13 +96,9 @@ fun DetailScreen(id:String,countryViewModel: CountryViewModel, navController: Na
                 }
             }
         }
-    }
-    else{
+    } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(text = "No Internet", textAlign = TextAlign.Center)
         }
     }
 }
-
-
-

@@ -1,45 +1,47 @@
 package com.example.countrystats.ui.screens
 
-import android.util.Log
 import com.example.countrystats.data.remote.models.CountryDetails
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.Home
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.ui.nav.Screens
 import com.example.countrystats.ui.vm.CountryViewModel
-import java.time.temporal.TemporalAdjusters.next
 
 @Composable
 fun HomeScreen(
@@ -50,9 +52,18 @@ fun HomeScreen(
 
     val countries = countryViewModel.countryList!!
 
-
-
     Scaffold(
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = {Text("View Chart")},
+                icon={Icon(Icons.Filled.List,contentDescription=null)},
+                onClick = {
+                    navController.navigate(Screens.ViewChart.route)
+                }
+            )
+
+        },
+
         topBar = {
             TopAppBar(
                 title = {
@@ -61,27 +72,29 @@ fun HomeScreen(
             )
         }
     ) {
-        LaunchedEffect(key1 = networkStatus){
-            if (networkStatus == ConnectivityObserver.Status.Available){
+        LaunchedEffect(key1 = networkStatus) {
+            if (networkStatus == ConnectivityObserver.Status.Available) {
                 countryViewModel.getCountryList()
             }
         }
         if (networkStatus == ConnectivityObserver.Status.Available) {
-            if (countries.isNotEmpty()){
-                LazyColumn(modifier = Modifier.padding(it)) {
-                    itemsIndexed(countries) {index, country ->
-                        CountryCard(
-                            country = country,
-                            countryIndex = index,
-                            navController = navController
-                        )
+            if (countries.isNotEmpty()) {
+                    LazyColumn(modifier = Modifier.padding(it)) {
+                        itemsIndexed(countries) { index, country ->
+                            CountryCard(
+                                country = country,
+                                countryIndex = index,
+                                navController = navController
+                            )
+                        }
                     }
                 }
-            }
         } else {
-            Box(modifier = Modifier
-                .padding(it)
-                .fillMaxSize(), contentAlignment = Alignment.Center){
+            Box(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(), contentAlignment = Alignment.Center
+            ) {
                 Text("No Internet")
             }
         }
@@ -94,7 +107,6 @@ fun CountryCard(
     countryIndex: Int,
     navController: NavController
 ) {
-
     val context = LocalContext.current
     Card(
         elevation = 7.dp,
@@ -132,9 +144,6 @@ fun CountryCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
         }
-
     }
-
 }
