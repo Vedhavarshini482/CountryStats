@@ -1,5 +1,7 @@
 package com.example.countrystats.util
 
+import com.github.mikephil.charting.charts.BarChart
+
 class Constants {
     companion object {
         const val BASE_URL = "https://restcountries.com/"

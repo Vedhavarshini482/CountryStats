@@ -124,7 +124,8 @@ fun CountryCard(
                 painter = rememberAsyncImagePainter(
                     model = country.flags.png,
                     imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit,
+
                 ),
                 contentDescription = "Flag of /${country.name}",
                 contentScale = ContentScale.Crop,
