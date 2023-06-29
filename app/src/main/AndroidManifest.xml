@@ -16,7 +16,7 @@
         android:theme="@style/Theme.CountryStats"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".BarChartActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -42,6 +42,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ConnectivityObserver
 import com.example.countrystats.ui.nav.Screens
 import com.example.countrystats.ui.vm.CountryViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @Composable
 fun HomeScreen(
@@ -50,8 +53,11 @@ fun HomeScreen(
     networkStatus: ConnectivityObserver.Status
 ) {
 
-    val countries = countryViewModel.countryList
     var isLoading by remember { mutableStateOf(true) }
+
+    val countries = rememberListData()
+
+
 
     Scaffold(
         topBar = {
@@ -64,7 +70,7 @@ fun HomeScreen(
         floatingActionButton = {
             if (networkStatus == ConnectivityObserver.Status.Available) {
                 ExtendedFloatingActionButton(
-                    text = { Text("View Chart") },
+                    text = { Text("Top 10") },
                     icon = { Icon(Icons.Filled.List, contentDescription = null) },
                     onClick = {
                         navController.navigate(Screens.ViewChart.route)
@@ -73,35 +79,46 @@ fun HomeScreen(
             }
         }
     ) {
-        if(isLoading)
-            LoadingScreen()
+
+        LaunchedEffect(Unit) {
+
+            withContext(Dispatchers.IO) {
+                delay(2000)
+                countries.clear()
+                countries.addAll(countryViewModel.countryList)
+                isLoading = false
+            }
+        }
         LaunchedEffect(key1 = networkStatus) {
             if (networkStatus == ConnectivityObserver.Status.Available) {
                 countryViewModel.getCountryList()
             }
         }
 
-        if (networkStatus == ConnectivityObserver.Status.Available) {
-
-            if (countries.isNotEmpty()) {
-                isLoading=false
-                LazyColumn(modifier = Modifier.padding(it)) {
-                    itemsIndexed(countries) { index, country ->
-                        CountryCard(
-                            country = country,
-                            countryIndex = index,
-                            navController = navController
-                        )
+        if (isLoading)
+            LoadingScreen()
+        else {
+            if (networkStatus == ConnectivityObserver.Status.Available) {
+                if (countries.isNotEmpty()) {
+                    isLoading = false
+                    LazyColumn(modifier = Modifier.padding(it)) {
+                        itemsIndexed(countries) { index, country ->
+                            CountryCard(
+                                country = country,
+                                countryIndex = index,
+                                navController = navController
+                            )
+                        }
                     }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text("No Internet")
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    Text("No Internet")
+                }
             }
         }
     }
@@ -166,4 +183,8 @@ fun LoadingScreen() {
     ) {
         CircularProgressIndicator()
     }
+}
+@Composable
+fun rememberListData():MutableList<CountryDetails>{
+    return remember{ mutableListOf() }
 }

@@ -14,7 +14,6 @@ class CountryViewModel : ViewModel() {
 
     private val _countryList = mutableStateListOf<CountryDetails>()
     var errorMessage: String by mutableStateOf("")
-
     val countryList: List<CountryDetails>
         get() = _countryList
 

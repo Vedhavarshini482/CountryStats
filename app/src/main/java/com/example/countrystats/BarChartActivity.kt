@@ -9,7 +9,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 
-class MainActivity2 : ComponentActivity() {
+class BarChartActivity : ComponentActivity() {
 
     lateinit var barChart: BarChart
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +37,7 @@ class MainActivity2 : ComponentActivity() {
         entries.add(BarEntry(8f,populations[8].toFloat()))
         entries.add(BarEntry(9f,populations[9].toFloat()))
 
-        val barDataSet = BarDataSet(entries, "Cells")
+        val barDataSet = BarDataSet(entries, "Countries")
 
         barDataSet.valueTextColor= Color.BLACK
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS,255)

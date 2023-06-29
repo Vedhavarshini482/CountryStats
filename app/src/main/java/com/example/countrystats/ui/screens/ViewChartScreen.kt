@@ -39,9 +39,12 @@ import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ConnectivityObserver
-import com.example.countrystats.MainActivity2
+import com.example.countrystats.BarChartActivity
 import com.example.countrystats.data.remote.models.CountryDetails
 import com.example.countrystats.ui.vm.CountryViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ViewChartScreen(
@@ -49,11 +52,11 @@ fun ViewChartScreen(
     navController: NavController,
     networkStatus: ConnectivityObserver.Status
 ) {
-    var countries = countryViewModel.countryList
+    val countries = rememberListData()
+
     var context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
 
-    var names:List<String> = ArrayList()
     var populations:List<Long> = ArrayList()
 
     Scaffold(
@@ -67,7 +70,7 @@ fun ViewChartScreen(
                     }
                 },
                 title = {
-                    Text(text = "View Chart", fontWeight = FontWeight.Bold)
+                    Text(text = "Top 10 Population", fontWeight = FontWeight.Bold)
                 }
             )
         },
@@ -77,7 +80,7 @@ fun ViewChartScreen(
                     text = { Text("Bar Chart") },
                     icon = { Icon(Icons.Filled.List, contentDescription = null) },
                     onClick = {
-                        val intent:Intent = Intent(context, MainActivity2::class.java)
+                        val intent:Intent = Intent(context, BarChartActivity::class.java)
                         intent.putExtra("list1", populations.toLongArray())
                         context.startActivity(intent)
                     }
@@ -85,33 +88,45 @@ fun ViewChartScreen(
             }
         }
     ) {
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                delay(2000)
+                countries.clear()
+                countries.addAll(countryViewModel.countryList)
+                isLoading = false
+            }
+        }
+
         LaunchedEffect(key1 = networkStatus) {
             if (networkStatus == ConnectivityObserver.Status.Available) {
                 countryViewModel.getCountryList()
             }
         }
-        if (networkStatus == ConnectivityObserver.Status.Available) {
-            if(isLoading)
-                LoadingScreen()
-            if (countries.isNotEmpty()) {
-                LazyColumn(modifier = Modifier.padding(it)) {
-                    items(countries.sortedByDescending { it.population }.take(10)) { country ->
-                         names = countries.map { it.name.common }
-                         populations = countries.map { it.population }
-                        isLoading=false
-                        CountryCard(
-                            country = country
-                        )
+
+        if (isLoading)
+            LoadingScreen()
+        else {
+            if (networkStatus == ConnectivityObserver.Status.Available) {
+                if (countries.isNotEmpty()) {
+                    LazyColumn(modifier = Modifier.padding(it)) {
+                        items(countries.sortedByDescending { it.population }.take(10)) { country ->
+                            populations = countries.map { it.population }
+                            isLoading = false
+                            CountryCard(
+                                country = country
+                            )
+                        }
                     }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text("No Internet")
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize(), contentAlignment = Alignment.Center
+                ) {
+                    Text("No Internet")
+                }
             }
         }
     }
