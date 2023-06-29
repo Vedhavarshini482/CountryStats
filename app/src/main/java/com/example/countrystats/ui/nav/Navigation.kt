@@ -1,16 +1,6 @@
 package com.example.countrystats.ui.nav
 
-import android.window.SplashScreen
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,7 +25,6 @@ fun SetupNavHost(
     navController: NavHostController,
     networkStatus: ConnectivityObserver.Status
 ) {
-
     NavHost(navController = navController, startDestination = Screens.Home.route) {
         composable(route = Screens.Home.route) {
             HomeScreen(
@@ -45,7 +34,6 @@ fun SetupNavHost(
             )
         }
         composable(route = Screens.Detail.route + "/{countryId}") { backStackEntry->
-
             DetailScreen(
                 id = backStackEntry.arguments?.getString("countryId")!!,
                 countryViewModel = countryViewModel,
@@ -53,7 +41,6 @@ fun SetupNavHost(
                 networkStatus = networkStatus
             )
         }
-
         composable(route=Screens.ViewChart.route){
          ViewChartScreen(
              countryViewModel=countryViewModel,

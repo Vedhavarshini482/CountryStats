@@ -30,7 +30,6 @@ import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import com.example.countrystats.ConnectivityObserver
-import com.example.countrystats.data.remote.models.CountryDetails
 import com.example.countrystats.ui.vm.CountryViewModel
 
 @Composable
@@ -40,7 +39,7 @@ fun DetailScreen(
     navController: NavController,
     networkStatus: ConnectivityObserver.Status
 ) {
-    val country by remember { mutableStateOf<CountryDetails>(countryViewModel.countryList[id.toInt()]) }
+    val country by remember { mutableStateOf(countryViewModel.countryList[id.toInt()]) }
     val context = LocalContext.current
 
     if (networkStatus == ConnectivityObserver.Status.Available) {
@@ -50,9 +49,13 @@ fun DetailScreen(
                     TopAppBar(
                         navigationIcon = {
                             IconButton(onClick = {
-                                    navController.popBackStack()
-                            }) {
-                                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                                navController.popBackStack()
+                            }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowBack,
+                                    contentDescription = null
+                                )
                             }
                         },
                         title = {
@@ -81,7 +84,10 @@ fun DetailScreen(
                         modifier = Modifier.padding(10.dp)
                     )
                     Divider()
-                    Text(text = "Total Area : ${country.area} km", modifier = Modifier.padding(10.dp))
+                    Text(
+                        text = "Total Area : ${country.area} km",
+                        modifier = Modifier.padding(10.dp)
+                    )
                     Divider()
                     Text(
                         text = "Total Population : ${country.population}\n",

@@ -13,23 +13,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
@@ -44,11 +49,14 @@ fun ViewChartScreen(
     navController: NavController,
     networkStatus: ConnectivityObserver.Status
 ) {
-    var countries = countryViewModel.countryList!!
+    var countries = countryViewModel.countryList
     var context = LocalContext.current
+    var isLoading by remember { mutableStateOf(true) }
+
+    var names:List<String> = ArrayList()
+    var populations:List<Long> = ArrayList()
 
     Scaffold(
-
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -62,6 +70,19 @@ fun ViewChartScreen(
                     Text(text = "View Chart", fontWeight = FontWeight.Bold)
                 }
             )
+        },
+        floatingActionButton = {
+            if (networkStatus == ConnectivityObserver.Status.Available) {
+                ExtendedFloatingActionButton(
+                    text = { Text("Bar Chart") },
+                    icon = { Icon(Icons.Filled.List, contentDescription = null) },
+                    onClick = {
+                        val intent:Intent = Intent(context, MainActivity2::class.java)
+                        intent.putExtra("list1", populations.toLongArray())
+                        context.startActivity(intent)
+                    }
+                )
+            }
         }
     ) {
         LaunchedEffect(key1 = networkStatus) {
@@ -70,18 +91,17 @@ fun ViewChartScreen(
             }
         }
         if (networkStatus == ConnectivityObserver.Status.Available) {
+            if(isLoading)
+                LoadingScreen()
             if (countries.isNotEmpty()) {
                 LazyColumn(modifier = Modifier.padding(it)) {
                     items(countries.sortedByDescending { it.population }.take(10)) { country ->
-                        val names = countries.map { it.name.common }
-                        val populations = countries.map { it.population }
+                         names = countries.map { it.name.common }
+                         populations = countries.map { it.population }
+                        isLoading=false
                         CountryCard(
                             country = country
                         )
-                        val intent:Intent = Intent(context, MainActivity2::class.java)
-                        intent.putStringArrayListExtra("list1", ArrayList(names))
-                        intent.putExtra("list2", populations.toLongArray())
-                        context.startActivity(intent)
                     }
                 }
             }
@@ -102,7 +122,6 @@ fun CountryCard(
     country: CountryDetails
 ) {
     val context = LocalContext.current
-
     Card(
         elevation = 7.dp,
         shape = RoundedCornerShape(7.dp),
@@ -110,32 +129,37 @@ fun CountryCard(
             .fillMaxSize()
             .padding(top = 7.dp, bottom = 7.dp, start = 14.dp, end = 14.dp)
     ) {
-        Row {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = country.flags.png,
-                    imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
-                    contentScale = ContentScale.Fit
-                ),
-                contentDescription = "Flag of /${country.name}",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(175.dp)
-                    .height(115.dp)
-            )
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .align(Alignment.CenterVertically)
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = country.name.common, fontWeight = FontWeight.Bold)
-                Text(text = country.name.official, fontWeight = FontWeight.Medium)
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        model = country.flags.png,
+                        imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
+                        contentScale = ContentScale.Fit,
+                    ),
+                    contentDescription = "Flag of /${country.name}",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(40.dp)
+                )
                 Text(
-                    text = country.population.toString(),
-                    fontWeight = FontWeight.Medium,
-                    overflow = TextOverflow.Ellipsis
+                    text = country.name.common,
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(10.dp),
+                    fontWeight = FontWeight.Bold
                 )
             }
+            Text(
+                text = "Official Name : ${country.name.official}",
+                modifier = Modifier.padding(5.dp),
+            )
+            Text(
+                text = "Total Population : ${country.population}\n",
+                modifier = Modifier.padding(5.dp),
+            )
         }
     }
 }
